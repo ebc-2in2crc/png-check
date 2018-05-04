@@ -1,0 +1,42 @@
+#!/bin/sh
+
+# https://ja.wikipedia.org/wiki/Portable_Network_Graphics
+# https://iwb.jp/png8-png24-png32-analyze/
+
+if [ -z "$1" ]; then
+	echo 'usage: png-check <png-file>'
+	exit 1
+fi
+
+if [ "$1" = '--version' ]; then
+	echo 'png-check version 0.9'
+	exit 0
+fi
+
+PNGFILE=$1
+
+which identify > /dev/null
+if [ $? -ne 0 ]; then
+	echo 'png-check require ImageMagick'
+	echo '$brew install imagemagick'
+	exit 1
+fi
+
+COLOR_TYPE=`identify -verbose "${PNGFILE}" | sed -n '/png:IHDR.color_type:/p' | awk '{print $2}'`
+ALPHA=`identify -verbose "${PNGFILE}" | sed -n -e 's/Alpha://p' | sed -n -e '1p'`
+case $COLOR_TYPE in
+	2)
+		echo 'PNG-24'
+		;;
+	3)
+		TRANSPARENT=`echo $ALPHA | sed -e 's/1-bit/(indexed color)/' -e 's/8-bit/(alpha channel)/'`
+		echo "PNG-8 ${TRANSPARENT}"
+		;;
+	6)
+		TRANSPARENT=`echo $ALPHA | sed -e 's/1-bit//' -e 's/8-bit/(alpha channel)/'`
+		echo "PNG-32 ${TRANSPARENT}"
+		;;
+	*)
+		echo 'unknown'
+		;;
+esac
