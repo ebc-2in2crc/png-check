@@ -14,7 +14,7 @@ if [ "$1" = '--help' ]; then
 fi
 
 if [ "$1" = '--version' ]; then
-	echo 'png-check version 0.9'
+	echo 'png-check version 0.10'
 	exit 0
 fi
 
