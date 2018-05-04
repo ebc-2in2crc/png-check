@@ -8,6 +8,11 @@ if [ -z "$1" ]; then
 	exit 1
 fi
 
+if [ "$1" = '--help' ]; then
+	echo 'usage: png-check <png-file>'
+	exit 0
+fi
+
 if [ "$1" = '--version' ]; then
 	echo 'png-check version 0.9'
 	exit 0
